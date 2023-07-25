@@ -170,8 +170,15 @@ const displayBoard = (()=>{
             displayBoard.setCurrentPlayer(2)
             gameBoard.clear();
         }
+        if(playerOne.getWinCount()-playerTwo.getWinCount()===3&&roundcount!=6){
+            displayBoard.overlay("Winner","Player one won since playing the next "+(6-roundcount)+" won't change a thing")
+            return;
+        } else if (playerTwo.getWinCount()-playerOne.getWinCount()===3&&roundcount!=6){
+            displayBoard.overlay("Winner","Player two won since playing the next "+(6-roundcount)+" won't change a thing")
+            return;
+        }
+
         if(roundcount===6){
-            console.log(6)
             if(playerOne.getWinCount()>playerTwo.getWinCount()){
                 displayBoard.overlay("Winner","Player one won")
             } else if (playerOne.getWinCount()<playerTwo.getWinCount()){
@@ -179,12 +186,13 @@ const displayBoard = (()=>{
             } else {
                 displayBoard.overlay("Stalemate","It's a tie")
             }
-        } else if (winner==="draw") { 
-            displayBoard.overlay("DRAW","It's a draw",1200)
-            setTimeout(() => {
-                gameBoard.clear()
-              }, 1500); 
         } 
+        // else if (winner==="draw") { 
+        //     displayBoard.overlay("DRAW","It's a draw",800)
+        //     setTimeout(() => {
+        //         gameBoard.clear()
+        //       }, 1000); 
+        // } 
     }
 
     
