@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="http://web.simmons.edu/~grovesd/comm244/notes/week4/reset.css">
+    <link rel="stylesheet" href="style.css">
+    <title>Tic Tac Toe</title>
+</head>
+<body>
+    <section id="intro" class="">
+        <h1>Tic Tac Toe</h1>
+        <p>
+            Tic Tac Toe is a two-player game where each player takes turns marking a 3x3 grid.
+            The player who succeeds in placing three of their marks in a horizontal, vertical, or diagonal row wins the round.
+        </p>
+        <p>
+            At the end of the fifth round, whoever has the most wins wins the whole game. 
+            If the two players are tied, then the game would end in a tie.
+        </p>
+        <button id="start-btn">Start &gt;&gt;&gt;</button>
+    </section>
+
+    <section id="game" class="hide">
+        <h2 class="current">Player 1: <span id="p1score">0</span> </h1>
+        <div class="grid-container">
+           
+            <div class="mini-box" data-id="0"></div>
+            <div class="mini-box" data-id="1"></div>
+            <div class="mini-box" data-id="2"></div>
+            <div class="mini-box" data-id="3"></div>
+            <div class="mini-box" data-id="4"></div>
+            <div class="mini-box" data-id="5"></div>
+            <div class="mini-box" data-id="6"></div>
+            <div class="mini-box" data-id="7"></div>
+            <div class="mini-box" data-id="8"></div>
+
+        </div>
+        <h2>Player 2: <span id="p2score">0</span> </h1>
+    </section>
+    <script src="code.js"></script>
+</body>
+</html>
