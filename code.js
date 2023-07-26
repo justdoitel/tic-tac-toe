@@ -73,7 +73,12 @@ const displayBoard = (()=>{
         }
     }
 
-    function overlay(title,message,time){
+    function resetScores(){
+        document.querySelectorAll("#game h2")[0].childNodes[1].textContent = "0";
+        document.querySelectorAll("#game h2")[1].childNodes[1].textContent = "0";
+    }
+
+    function overlay(title,message,second,buttonName,onclick){ 
         const overlay = document.createElement('div');
         overlay.classList.add('overlay');
 
@@ -88,11 +93,13 @@ const displayBoard = (()=>{
         p.textContent =  message;
         overlayContent.appendChild(p);
 
-        if(!time){
-        const replaybtn = document.createElement('button');
-        replaybtn.textContent = 'Replay';
-        replaybtn.onclick = replay;
-        overlayContent.appendChild(replaybtn);
+        let customButton;
+        if(buttonName){
+        customButton = document.createElement('button');
+        customButton.textContent = second?buttonName+" "+second:buttonName;
+        customButton.onclick = onclick;
+        customButton.classList.add("shiny-btn")
+        overlayContent.appendChild(customButton);
         }
 
         overlay.appendChild(overlayContent);
@@ -101,10 +108,21 @@ const displayBoard = (()=>{
         setTimeout(() => {
             overlay.classList.add('active');
         }, 10);
-        if(time){
-            setTimeout(() => {
-                hideOverlay()
-            }, time);
+        
+        if(second){
+            let interval = setInterval(() => {
+                second--;
+            
+                if (second > 0) {
+                    customButton.textContent = buttonName+" "+second;
+                } else {
+                    customButton.textContent = buttonName+" 0";
+                    setTimeout(()=>{
+                        clearInterval(interval);
+                        hideOverlay();
+                    },300)
+                }
+              }, 1000); 
         }
     }
 
@@ -117,16 +135,22 @@ const displayBoard = (()=>{
             }, 300); 
             }
         }
-        return {getCurrentPlayer,setCurrentPlayer,overlay,hideOverlay};
+        return {resetScores,getCurrentPlayer,setCurrentPlayer,overlay,hideOverlay};
 })();
 
 
-    let playerOne;
-    let playerTwo;
-    let roundcount;
-    replay();
 
-    function check() { //If game is over, it returns roundend(winningLetter)
+function replay(){
+    displayBoard.resetScores();
+    currentRound = 1;
+    playerOne = player("X",1)
+    playerTwo = player("O",2)
+    displayBoard.setCurrentPlayer(1);
+    displayBoard.hideOverlay();
+    gameBoard.clear();
+}
+
+    function check() { 
         for (let r = 0; r < 3; r++) {
             if (gameBoard.array(r,0) !== 0 && gameBoard.array(r,0) === gameBoard.array(r,1) && gameBoard.array(r,1) === gameBoard.array(r,2)) {
                 return roundend(gameBoard.array(r,0)); 
@@ -154,13 +178,11 @@ const displayBoard = (()=>{
                 }
             }
         }
-        
         return roundend("draw");
-        
     }
 
     function roundend(winner){
-        roundcount++;
+        currentRound++;
         if(winner===playerOne.getLetter()){
             playerOne.won();
             displayBoard.setCurrentPlayer(1);
@@ -169,36 +191,34 @@ const displayBoard = (()=>{
             playerTwo.won();
             displayBoard.setCurrentPlayer(2)
             gameBoard.clear();
+        } else if(playerOne.getWinCount()-playerTwo.getWinCount()!=3&&currentRound!=6){
+            displayBoard.overlay("draw","this round was a draw",2,"next round",displayBoard.hideOverlay);
+            gameBoard.clear();
         }
-        if(playerOne.getWinCount()-playerTwo.getWinCount()===3&&roundcount!=6){
-            displayBoard.overlay("Winner","Player one won since playing the next "+(6-roundcount)+" won't change a thing")
+        let numLeft=6-currentRound;
+        let text=(numLeft==1)?"round":`${numLeft} rounds`
+        if(playerOne.getWinCount()>(playerTwo.getWinCount()+numLeft)&&numLeft!=0){
+            displayBoard.overlay("Game Over","Player one won since playing the next "+text+" won't change a thing",null,"Replay",replay)
             return;
-        } else if (playerTwo.getWinCount()-playerOne.getWinCount()===3&&roundcount!=6){
-            displayBoard.overlay("Winner","Player two won since playing the next "+(6-roundcount)+" won't change a thing")
+        } else if (playerTwo.getWinCount()>(playerOne.getWinCount()+numLeft)&&numLeft!=0){
+            displayBoard.overlay("Game Over","Player two won since playing the next "+text+" won't change a thing",null,"Replay",replay)
             return;
         }
 
-        if(roundcount===6){
+        if(numLeft===0){
             if(playerOne.getWinCount()>playerTwo.getWinCount()){
-                displayBoard.overlay("Winner","Player one won")
+                displayBoard.overlay("Game Over","Player one won. Phew! That was instense.",null,"Rematch?",replay)
             } else if (playerOne.getWinCount()<playerTwo.getWinCount()){
-                displayBoard.overlay("Winner","Player two won")
+                displayBoard.overlay("Game Over","Player two won. Phew! That was instense.",null,"Rematch?",replay)
             } else {
-                displayBoard.overlay("Stalemate","It's a tie")
+                displayBoard.overlay("Game Over","It's a tie. Wanna rematch?",null,"Sure",replay)
             }
         } 
-        // else if (winner==="draw") { 
-        //     displayBoard.overlay("DRAW","It's a draw",800)
-        //     setTimeout(() => {
-        //         gameBoard.clear()
-        //       }, 1000); 
-        // } 
     }
 
     
     for (let box of document.getElementsByClassName("mini-box")){
         box.addEventListener("click",(evt)=>{
-            console.log(evt)
             let i = evt.currentTarget.dataset.id;
             if(displayBoard.getCurrentPlayer()==1){
                 if(playerOne.drawOn(Math.trunc(i/3),i%3)) displayBoard.setCurrentPlayer(2);
@@ -209,23 +229,48 @@ const displayBoard = (()=>{
         })
     }
 
-    
-    function replay(){
-        document.querySelectorAll("#game h2")[0].childNodes[1].textContent = "0";
-        document.querySelectorAll("#game h2")[1].childNodes[1].textContent = "0";
-        roundcount = 1;
-        playerOne = player("X",1)
-        playerTwo = player("O",2)
-        displayBoard.setCurrentPlayer(1);
-        displayBoard.hideOverlay();
-        gameBoard.clear();
+    let playerOne;
+    let playerTwo;
+    let currentRound;
+    replay();
+
+
+
+
+const test = (()=>{
+    function draw(){
+        document.getElementsByClassName('mini-box')[1-1].click()
+        document.getElementsByClassName('mini-box')[2-1].click()
+        document.getElementsByClassName('mini-box')[3-1].click()
+        document.getElementsByClassName('mini-box')[4-1].click()
+        document.getElementsByClassName('mini-box')[5-1].click()
+        document.getElementsByClassName('mini-box')[9-1].click()
+        document.getElementsByClassName('mini-box')[8-1].click()
+        document.getElementsByClassName('mini-box')[7-1].click()
+        document.getElementsByClassName('mini-box')[6-1].click()
     }
 
+    function secondwon(){
+        document.getElementsByClassName('mini-box')[1-1].click()
+        document.getElementsByClassName('mini-box')[2-1].click()
+        document.getElementsByClassName('mini-box')[4-1].click()
+        document.getElementsByClassName('mini-box')[5-1].click()
+        document.getElementsByClassName('mini-box')[9-1].click()
+        document.getElementsByClassName('mini-box')[8-1].click()
+        
+    }
 
-
-
-
-
+    function firstwon(){
+        document.getElementsByClassName('mini-box')[1-1].click()
+        document.getElementsByClassName('mini-box')[2-1].click()
+        document.getElementsByClassName('mini-box')[3-1].click()
+        document.getElementsByClassName('mini-box')[4-1].click()
+        document.getElementsByClassName('mini-box')[5-1].click()
+        document.getElementsByClassName('mini-box')[6-1].click()
+        document.getElementsByClassName('mini-box')[7-1].click()
+    }
+    return ({draw,secondwon,firstwon})
+})();
 
 
 

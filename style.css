@@ -22,56 +22,6 @@ time, mark, audio, video {
     font: inherit;
     vertical-align: baseline;
 }
-/* HTML5 display-role reset for older browsers */
-/* article, aside, details, figcaption, figure, 
-footer, header, hgroup, menu, nav, section {
-    display: block;
-}
-body {
-    line-height: 1;
-}
-ol, ul {
-    list-style: none;
-}
-blockquote, q {
-    quotes: none;
-}
-blockquote:before, blockquote:after,
-q:before, q:after {
-    content: '';
-    content: none;
-}
-table {
-    border-collapse: collapse;
-    border-spacing: 0;
-}
-
-.container {
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    justify-items: center;
-}
-
-.box {
-    padding: 5px;
-}
-
-.box:nth-of-type(3n+1){
-    border-right: solid black 1px;
-}
-
-.box:nth-of-type(3n+3){
-    border-left: solid black 1px;
-}
-
-.box:nth-of-type(n+1):nth-of-type(-n+3){
-    border-bottom: solid black 1px;
-}
-
-.box:nth-of-type(n+1):nth-of-type(-n+3){
-    border-bottom: solid black 1px;
-} */
-
 
 body {
     display: flex;
@@ -98,6 +48,18 @@ body {
     margin-bottom: 20px;
     font-weight: 700;
 }
+#intro>h2 {
+    font-size: 1.3em;
+    margin-bottom: 20px;
+    font-weight: 700;
+    text-align: left;
+}
+
+#intro > ul {
+    text-align: left;
+    list-style-type: disc;
+    margin-left: 5%;
+}
 
 #intro > p {
     font-size: 1.2em;
@@ -106,7 +68,7 @@ body {
     text-align: justify;
 }
 
-#start-btn {
+#start-btn,.shiny-btn {
     position: relative;
     background-color: hsl(287, 51%, 33%);
     color: #ffffff;
@@ -119,11 +81,11 @@ body {
     overflow: hidden;
 }
 
-#start-btn:hover{
+#start-btn:hover, .shiny-btn:hover{
     transform: scale(1.1);
 }
 
-#start-btn::before {
+#start-btn::before, .shiny-btn::before {
     content: '';
     position: absolute;
     top: 0;
@@ -135,7 +97,7 @@ body {
     transition: left 0.3s ease;
 }
 
-#start-btn:hover::before {
+#start-btn:hover::before,.shiny-btn:hover::before {
     left: 100%;
 }
 
